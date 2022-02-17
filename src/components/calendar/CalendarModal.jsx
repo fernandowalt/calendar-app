@@ -1,11 +1,18 @@
 import Modal from "react-modal";
 import DateTimePicker from "react-datetime-picker";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { modalClose } from "../../actions/ui";
+import {
+  setStartDate,
+  setendDate,
+  setTitle,
+  setNotes,
+  reset,
+} from "../../actions/setters";
 
 import {
   eventAddNew,
@@ -29,18 +36,11 @@ const now = moment().minutes(0).seconds(0).add(1, "hours");
 
 const nowEnd = now.clone().add(1, "hours");
 
-const initEvent = {
-  title: "",
-  note: "",
-  start: now.toDate(),
-  end: nowEnd.toDate(),
-};
-
-export const CalendarModal = (props) => {
-  const { startDate, endDate } = { ...props };
-
+export const CalendarModal = () => {
   const { modalOpen } = useSelector((state) => state.ui);
   const { activeEvent } = useSelector((state) => state.calendar);
+  const { setting } = useSelector((state) => state);
+  const { start, end, title, notes } = useSelector((state) => state.setting);
 
   const [dateStart, setDateStart] = useState(now.toDate());
 
@@ -48,54 +48,33 @@ export const CalendarModal = (props) => {
 
   const [titleValid, settitleValid] = useState(true);
 
-  const [formValues, setFormValues] = useState(initEvent);
-
-  const { notes, title, start, end } = formValues;
-
-  useEffect(() => {
-    if (activeEvent) {
-      setFormValues(activeEvent);
-    } else {
-      setFormValues(initEvent);
-    }
-  }, [activeEvent, setFormValues]);
-
   const dispatch = useDispatch();
 
   const closeModal = () => {
     dispatch(modalClose());
     dispatch(eventClearActiveEvent());
-    setFormValues(initEvent);
   };
 
   const handleStartDateChange = (e) => {
-    setDateStart(end);
-    setFormValues({
-      ...formValues,
-      start: e,
-    });
+    setDateStart(e);
+    dispatch(setStartDate(e));
   };
 
   const handleEndDateChange = (e) => {
     setdateEnd(e);
-    setFormValues({
-      ...formValues,
-      end: e,
-    });
+    dispatch(setendDate(e));
   };
 
-  const handleInputChange = ({ target }) => {
-    setFormValues({
-      ...formValues,
-      [target.name]: target.value,
-    });
+  const handleInputChangeTitle = ({ target }) => {
+    dispatch(setTitle(target.value));
+  };
+
+  const handleInputChangeNotes = ({ target }) => {
+    dispatch(setNotes(target.value));
   };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-
-    handleStartDateChange();
-    handleEndDateChange();
 
     const momentStart = moment(start);
     const momentEnd = moment(end);
@@ -113,12 +92,12 @@ export const CalendarModal = (props) => {
     }
 
     if (activeEvent) {
-      dispatch(eventUpdateActive(formValues));
+      dispatch(eventUpdateActive(setting));
       dispatch(eventClearActiveEvent());
     } else {
       dispatch(
         eventAddNew({
-          ...formValues,
+          ...setting,
           id: new Date().getTime(),
           user: {
             _id: "3251",
@@ -131,6 +110,7 @@ export const CalendarModal = (props) => {
     settitleValid(true);
 
     dispatch(modalClose());
+    dispatch(reset());
   };
 
   return (
@@ -149,7 +129,8 @@ export const CalendarModal = (props) => {
           <label>Fecha y hora inicio</label>
           <DateTimePicker
             onChange={handleStartDateChange}
-            value={props.startDate !== undefined ? startDate : dateStart}
+            value={start !== undefined ? start : dateStart}
+            name="dataStart"
             className="form-control react-dateime-picker react-dateime-picker__wrapper "
           />
         </div>
@@ -158,8 +139,9 @@ export const CalendarModal = (props) => {
           <label>Fecha y hora fin</label>
           <DateTimePicker
             onChange={handleEndDateChange}
-            value={props.endDate !== undefined ? endDate : dateEnd}
+            value={end !== undefined ? end : dateEnd}
             minDate={dateStart}
+            name="dateEnd"
             className="form-control react-dateime-picker react-dateime-picker__wrapper "
           />
         </div>
@@ -172,8 +154,7 @@ export const CalendarModal = (props) => {
             placeholder="Título del evento"
             name="title"
             autoComplete="off"
-            value={title}
-            onChange={handleInputChange}
+            onChange={handleInputChangeTitle}
           />
         </div>
 
@@ -184,8 +165,7 @@ export const CalendarModal = (props) => {
             placeholder="Notas"
             rows="5"
             name="notes"
-            value={notes}
-            onChange={handleInputChange}
+            onChange={handleInputChangeNotes}
           ></textarea>
         </div>
 

@@ -13,6 +13,7 @@ import { startModal } from "../../actions/ui";
 import { setActive } from "../../actions/CalendarEvents";
 import { AddNewFab } from "../Ui/AddNewFab";
 import { DeleteEvent } from "../Ui/DeleteEvent";
+import { setStartDate, setendDate } from "../../actions/setters";
 
 const localizer = momentLocalizer(moment);
 
@@ -38,14 +39,18 @@ export const CalendarScreen = () => {
     localStorage.setItem("Lastview", e);
   };
 
-  const [fechas, setfechas] = useState({ start: undefined, end: undefined });
-
   const onSelectSlot = ({ action, start, end }) => {
     if (action === "doubleClick") {
-      setfechas({
-        start: moment(start).minutes(0).seconds(0).add(1, "hours").toDate(),
-        end: moment(end).minutes(0).seconds(0).add(2, "hours").toDate(),
-      });
+      const inicio = moment(start)
+        .minutes(0)
+        .seconds(0)
+        .add(1, "hours")
+        .toDate();
+      const fin = moment(end).minutes(0).seconds(0).add(2, "hours").toDate();
+
+      dispatch(setStartDate(inicio));
+      dispatch(setendDate(fin));
+
       dispatch(startModal());
     }
   };
@@ -64,7 +69,6 @@ export const CalendarScreen = () => {
     <div className="calendar-screen">
       <Navbar />
       <Calendar
-        fechas={fechas}
         localizer={localizer}
         events={events}
         startAccessor="start"
@@ -82,7 +86,7 @@ export const CalendarScreen = () => {
       <AddNewFab />
       {activeEvent && <DeleteEvent />}
 
-      <CalendarModal startDate={fechas.start} endDate={fechas.end} />
+      <CalendarModal />
     </div>
   );
 };
