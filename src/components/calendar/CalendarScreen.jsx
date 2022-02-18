@@ -13,7 +13,7 @@ import { startModal } from "../../actions/ui";
 import { setActive } from "../../actions/CalendarEvents";
 import { AddNewFab } from "../Ui/AddNewFab";
 import { DeleteEvent } from "../Ui/DeleteEvent";
-import { setStartDate, setendDate } from "../../actions/setters";
+import { setStartDate, setendDate} from "../../actions/setters";
 
 const localizer = momentLocalizer(moment);
 
@@ -26,12 +26,12 @@ export const CalendarScreen = () => {
 
   const dispatch = useDispatch();
 
-  const onDoubleClick = (e) => {
-    dispatch(startModal());
-  };
-
   const onSelectEvent = (e) => {
     dispatch(setActive(e));
+  
+  };
+  const onDoubleClick = (e) => {
+    dispatch(startModal());
   };
 
   const onViewChange = (e) => {

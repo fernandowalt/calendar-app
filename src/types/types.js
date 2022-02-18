@@ -12,5 +12,6 @@ export const types = {
   setendDate: "[setters] Set end date",
   setTitle: "[setters] set title",
   setNotes: "[setters] set notes",
-  reset:"[setters] Reset"
+  reset: "[setters] Reset",
+  userSelected: "[setters] user Selected",
 };

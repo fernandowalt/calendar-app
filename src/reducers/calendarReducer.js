@@ -53,6 +53,7 @@ export const calendarReducer = (state = initialState, action) => {
         activeEvent: null,
       };
 
+    
     default:
       return state;
   }

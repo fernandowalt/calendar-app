@@ -1,10 +1,13 @@
 import { types } from "../types/types";
 
 const initialState = {
-  start: new Date(),
-  end: new Date(),
-  title: "",
-  notes: "",
+  init: {
+    start: new Date(),
+    end: new Date(),
+    title: "",
+    notes: "",
+    id: 0,
+  },
 };
 
 export const settersDate = (state = initialState, action) => {
@@ -12,34 +15,39 @@ export const settersDate = (state = initialState, action) => {
     case types.setStartDate:
       return {
         ...state,
-        start: action.payload,
+        init: { ...state.init, start: action.payload },
       };
 
     case types.setendDate:
       return {
         ...state,
-        end: action.payload,
+        init: { ...state.init, end: action.payload },
       };
     case types.setTitle:
       return {
         ...state,
-        title: action.payload,
+        init: { ...state.init, title: action.payload },
       };
 
     case types.setNotes:
       return {
         ...state,
-        notes: action.payload,
+        init: { ...state.init, notes: action.payload },
       };
 
     case types.reset:
       return {
         ...state,
-        notes: "",
-        title: "",
-        start: new Date(),
-        end: new Date(),
+        init: { notes: "", title: "", start: new Date(), end: new Date() },
       };
+
+    case types.userSelected:
+      return {
+        ...state,
+        init: action.payload,
+      };
+
+      
 
     default:
       return state;

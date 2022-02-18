@@ -1,7 +1,7 @@
 import Modal from "react-modal";
 import DateTimePicker from "react-datetime-picker";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -12,12 +12,13 @@ import {
   setTitle,
   setNotes,
   reset,
+  userSelected,
 } from "../../actions/setters";
 
 import {
   eventAddNew,
   eventClearActiveEvent,
-  eventUpdateActive,
+  eventActiveUpdate,
 } from "../../actions/CalendarEvents";
 
 const customStyles = {
@@ -32,36 +33,38 @@ const customStyles = {
 };
 
 Modal.setAppElement("#root");
-const now = moment().minutes(0).seconds(0).add(1, "hours");
-
-const nowEnd = now.clone().add(1, "hours");
 
 export const CalendarModal = () => {
+  const dispatch = useDispatch();
   const { modalOpen } = useSelector((state) => state.ui);
+
   const { activeEvent } = useSelector((state) => state.calendar);
-  const { setting } = useSelector((state) => state);
-  const { start, end, title, notes } = useSelector((state) => state.setting);
 
-  const [dateStart, setDateStart] = useState(now.toDate());
+  const { init } = useSelector((state) => state.setting);
 
-  const [dateEnd, setdateEnd] = useState(nowEnd.toDate());
+  const { start, end, title, notes } = useSelector(
+    (state) => state.setting.init
+  );
 
   const [titleValid, settitleValid] = useState(true);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (activeEvent) {
+      dispatch(userSelected(activeEvent));
+    }
+  }, [activeEvent, dispatch]);
 
   const closeModal = () => {
     dispatch(modalClose());
     dispatch(eventClearActiveEvent());
+    dispatch(reset());
   };
 
   const handleStartDateChange = (e) => {
-    setDateStart(e);
     dispatch(setStartDate(e));
   };
 
   const handleEndDateChange = (e) => {
-    setdateEnd(e);
     dispatch(setendDate(e));
   };
 
@@ -76,8 +79,10 @@ export const CalendarModal = () => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
 
-    const momentStart = moment(start);
-    const momentEnd = moment(end);
+    const momentStart = moment(activeEvent ? activeEvent.start : start);
+    const momentEnd = moment(activeEvent ? activeEvent.end : end);
+    console.log(momentStart);
+    console.log(momentEnd);
 
     if (momentStart.isSameOrAfter(momentEnd)) {
       return Swal.fire(
@@ -92,12 +97,13 @@ export const CalendarModal = () => {
     }
 
     if (activeEvent) {
-      dispatch(eventUpdateActive(setting));
+      dispatch(eventActiveUpdate(init));
       dispatch(eventClearActiveEvent());
+      dispatch(reset());
     } else {
       dispatch(
         eventAddNew({
-          ...setting,
+          ...init,
           id: new Date().getTime(),
           user: {
             _id: "3251",
@@ -129,7 +135,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora inicio</label>
           <DateTimePicker
             onChange={handleStartDateChange}
-            value={start !== undefined ? start : dateStart}
+            value={activeEvent ? activeEvent.start : start}
             name="dataStart"
             className="form-control react-dateime-picker react-dateime-picker__wrapper "
           />
@@ -139,8 +145,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora fin</label>
           <DateTimePicker
             onChange={handleEndDateChange}
-            value={end !== undefined ? end : dateEnd}
-            minDate={dateStart}
+            value={activeEvent ? activeEvent.end : end}
             name="dateEnd"
             className="form-control react-dateime-picker react-dateime-picker__wrapper "
           />
@@ -154,6 +159,7 @@ export const CalendarModal = () => {
             placeholder="Título del evento"
             name="title"
             autoComplete="off"
+            defaultValue={activeEvent ? activeEvent.title : title}
             onChange={handleInputChangeTitle}
           />
         </div>
@@ -165,6 +171,7 @@ export const CalendarModal = () => {
             placeholder="Notas"
             rows="5"
             name="notes"
+            defaultValue={activeEvent ? activeEvent.notes : notes}
             onChange={handleInputChangeNotes}
           ></textarea>
         </div>
