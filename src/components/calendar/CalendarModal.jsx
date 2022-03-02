@@ -19,6 +19,7 @@ import {
   eventAddNew,
   eventClearActiveEvent,
   eventActiveUpdate,
+  eventStartAddNew,
 } from "../../actions/CalendarEvents";
 
 const customStyles = {
@@ -102,13 +103,8 @@ export const CalendarModal = () => {
       dispatch(reset());
     } else {
       dispatch(
-        eventAddNew({
+        eventStartAddNew({
           ...init,
-          id: new Date().getTime(),
-          user: {
-            _id: "3251",
-            name: "waltoor",
-          },
         })
       );
     }

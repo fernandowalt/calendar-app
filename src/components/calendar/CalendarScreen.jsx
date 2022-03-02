@@ -10,15 +10,17 @@ import { CalendarEvent } from "./CalendarEvent";
 import { CalendarModal } from "./CalendarModal";
 import { useDispatch, useSelector } from "react-redux";
 import { startModal } from "../../actions/ui";
-import { setActive } from "../../actions/CalendarEvents";
+import { eventStartLoading, setActive } from "../../actions/CalendarEvents";
 import { AddNewFab } from "../Ui/AddNewFab";
 import { DeleteEvent } from "../Ui/DeleteEvent";
-import { setStartDate, setendDate} from "../../actions/setters";
+import { setStartDate, setendDate } from "../../actions/setters";
+import { useEffect } from "react";
 
 const localizer = momentLocalizer(moment);
 
 export const CalendarScreen = () => {
   const { events, activeEvent } = useSelector((state) => state.calendar);
+  const { uid } = useSelector((state) => state.auth);
 
   const [lastView, setLastView] = useState(
     localStorage.getItem("Lastview") || "month"
@@ -26,9 +28,12 @@ export const CalendarScreen = () => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(eventStartLoading());
+  }, [dispatch]);
+
   const onSelectEvent = (e) => {
     dispatch(setActive(e));
-  
   };
   const onDoubleClick = (e) => {
     dispatch(startModal());
@@ -56,8 +61,9 @@ export const CalendarScreen = () => {
   };
 
   const eventStyleGetter = (event, start, end, isSelected) => {
+    console.log(event);
     const style = {
-      backgroundColor: "#3CD351",
+      backgroundColor: uid === event.user? "#3CD351" : "#465660",
       borderRadius: "0px",
       opacity: 0.8,
       display: "block",
