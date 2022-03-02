@@ -14,4 +14,9 @@ export const types = {
   setNotes: "[setters] set notes",
   reset: "[setters] Reset",
   userSelected: "[setters] user Selected",
+
+
+  authCheckingFinish:"[auth] auth register",
+  authLogin: "[auth] auth login",
+  authLogout:"[auth] auth logout"
 };
