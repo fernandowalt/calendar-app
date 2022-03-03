@@ -41,11 +41,7 @@ export const settersDate = (state = initialState, action) => {
         init: { notes: "", title: "", start: new Date(), end: new Date() },
       };
 
-    case types.userSelected:
-      return {
-        ...state,
-        init: action.payload,
-      };
+
 
       
 

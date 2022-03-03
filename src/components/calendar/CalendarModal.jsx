@@ -1,7 +1,7 @@
 import Modal from "react-modal";
 import DateTimePicker from "react-datetime-picker";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,6 @@ import {
   setTitle,
   setNotes,
   reset,
-  userSelected,
 } from "../../actions/setters";
 
 import {
@@ -40,19 +39,11 @@ export const CalendarModal = () => {
 
   const { activeEvent } = useSelector((state) => state.calendar);
 
-  const { init } = useSelector((state) => state.setting);
-
   const { start, end, title, notes } = useSelector(
     (state) => state.setting.init
   );
 
   const [titleValid, settitleValid] = useState(true);
-
-  useEffect(() => {
-    if (activeEvent) {
-      dispatch(userSelected(activeEvent));
-    }
-  }, [activeEvent, dispatch]);
 
   const closeModal = () => {
     dispatch(modalClose());
@@ -79,6 +70,8 @@ export const CalendarModal = () => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
 
+    console.log(e);
+
     const momentStart = moment(activeEvent ? activeEvent.start : start);
     const momentEnd = moment(activeEvent ? activeEvent.end : end);
 
@@ -95,13 +88,13 @@ export const CalendarModal = () => {
     }
 
     if (activeEvent) {
-      dispatch(eventStartUpdate(init));
+      dispatch(eventStartUpdate(activeEvent));
       dispatch(eventClearActiveEvent());
       dispatch(reset());
     } else {
       dispatch(
         eventStartAddNew({
-          ...init,
+          ...activeEvent,
         })
       );
     }

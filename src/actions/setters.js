@@ -22,7 +22,3 @@ export const setNotes = (notes) => ({
 export const reset = () => ({
   type: types.reset,
 });
-export const userSelected = (user) => ({
-  type: types.userSelected,
-  payload: user,
-});
