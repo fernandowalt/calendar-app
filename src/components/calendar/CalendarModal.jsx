@@ -16,10 +16,9 @@ import {
 } from "../../actions/setters";
 
 import {
-  eventAddNew,
   eventClearActiveEvent,
-  eventActiveUpdate,
   eventStartAddNew,
+  eventStartUpdate,
 } from "../../actions/CalendarEvents";
 
 const customStyles = {
@@ -82,8 +81,6 @@ export const CalendarModal = () => {
 
     const momentStart = moment(activeEvent ? activeEvent.start : start);
     const momentEnd = moment(activeEvent ? activeEvent.end : end);
-    console.log(momentStart);
-    console.log(momentEnd);
 
     if (momentStart.isSameOrAfter(momentEnd)) {
       return Swal.fire(
@@ -98,7 +95,7 @@ export const CalendarModal = () => {
     }
 
     if (activeEvent) {
-      dispatch(eventActiveUpdate(init));
+      dispatch(eventStartUpdate(init));
       dispatch(eventClearActiveEvent());
       dispatch(reset());
     } else {
