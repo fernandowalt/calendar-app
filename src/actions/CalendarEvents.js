@@ -106,3 +106,8 @@ const eventLoaded = (events) => ({
   type: types.eventLoaded,
   payload: events,
 });
+
+export const eventReset = () => ({
+  type: types.eventReset,
+});
+

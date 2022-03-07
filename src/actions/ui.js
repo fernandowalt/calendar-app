@@ -7,3 +7,4 @@ export const startModal = () => ({
 export const modalClose = () => ({
   type: types.uiCloseModal,
 });
+

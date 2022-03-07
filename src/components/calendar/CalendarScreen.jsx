@@ -15,8 +15,16 @@ import { AddNewFab } from "../Ui/AddNewFab";
 import { DeleteEvent } from "../Ui/DeleteEvent";
 import { setStartDate, setendDate } from "../../actions/setters";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 const localizer = momentLocalizer(moment);
+
+const evento = {
+  start: new Date(),
+  end: new Date(),
+  title: "",
+  notes: "",
+};
 
 export const CalendarScreen = () => {
   const { events, activeEvent } = useSelector((state) => state.calendar);
@@ -36,7 +44,17 @@ export const CalendarScreen = () => {
     dispatch(setActive(e));
   };
   const onDoubleClick = (e) => {
-    dispatch(startModal());
+    if (activeEvent.user === uid) {
+      dispatch(startModal());
+    } else {
+      dispatch(setActive(evento));
+
+      Swal.fire(
+        "Sin Permiso",
+        "no puedes editar eventos de otros usuarios",
+        "error"
+      );
+    }
   };
 
   const onViewChange = (e) => {

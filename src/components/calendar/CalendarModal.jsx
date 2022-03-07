@@ -38,6 +38,7 @@ export const CalendarModal = () => {
     title: "",
     notes: "",
   });
+  console.log(values);
   useEffect(() => {
     if (activeEvent) {
       setvalues({ ...activeEvent });
@@ -51,6 +52,12 @@ export const CalendarModal = () => {
   const closeModal = () => {
     dispatch(modalClose());
     dispatch(eventClearActiveEvent());
+    setvalues({
+      start: new Date(),
+      end: new Date(),
+      title: "",
+      notes: "",
+    });
   };
 
   const handleStartDateChange = (e) => {

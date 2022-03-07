@@ -10,13 +10,13 @@ export const types = {
   eventActiveUpdate: "[event] Update active event",
   eventDeleted: "[event] Deleted active event",
   eventLoaded: "[event] Loaded events",
+  eventReset: "[event]Resert events",
 
   setStartDate: "[setters] Set start date",
   setendDate: "[setters] Set end date",
   setTitle: "[setters] set title",
   setNotes: "[setters] set notes",
   reset: "[setters] Reset",
-
 
   authCheckingFinish: "[auth] auth register",
   authLogin: "[auth] auth login",
