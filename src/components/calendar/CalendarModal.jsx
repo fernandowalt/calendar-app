@@ -6,19 +6,13 @@ import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { modalClose } from "../../actions/ui";
-import {
-  setStartDate,
-  setendDate,
-  setTitle,
-  setNotes,
-  reset,
-} from "../../actions/setters";
 
 import {
   eventClearActiveEvent,
   eventStartAddNew,
   eventStartUpdate,
 } from "../../actions/CalendarEvents";
+import { useEffect } from "react";
 
 const customStyles = {
   content: {
@@ -34,67 +28,59 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 export const CalendarModal = () => {
-  const dispatch = useDispatch();
   const { modalOpen } = useSelector((state) => state.ui);
-
   const { activeEvent } = useSelector((state) => state.calendar);
+  const dispatch = useDispatch();
 
-  const { start, end, title, notes } = useSelector(
-    (state) => state.setting.init
-  );
+  const [values, setvalues] = useState({
+    start: new Date(),
+    end: new Date(),
+    title: "",
+    notes: "",
+  });
+  useEffect(() => {
+    if (activeEvent) {
+      setvalues({ ...activeEvent });
+    }
+  }, [activeEvent]);
+
+  const { start, end, title, notes } = values;
 
   const [titleValid, settitleValid] = useState(true);
 
   const closeModal = () => {
     dispatch(modalClose());
     dispatch(eventClearActiveEvent());
-    dispatch(reset());
   };
 
   const handleStartDateChange = (e) => {
-    dispatch(setStartDate(e));
+    setvalues({ ...values, start: e });
   };
 
   const handleEndDateChange = (e) => {
-    dispatch(setendDate(e));
+    console.log(values);
+    setvalues({ ...values, end: e });
   };
 
   const handleInputChangeTitle = ({ target }) => {
-    dispatch(setTitle(target.value));
+    console.log(values);
+    setvalues({ ...values, title: target.value });
   };
 
   const handleInputChangeNotes = ({ target }) => {
-    dispatch(setNotes(target.value));
+    console.log(values);
+    setvalues({ ...values, notes: target.value });
   };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
 
-    console.log(e);
-
-    const momentStart = moment(activeEvent ? activeEvent.start : start);
-    const momentEnd = moment(activeEvent ? activeEvent.end : end);
-
-    if (momentStart.isSameOrAfter(momentEnd)) {
-      return Swal.fire(
-        "error",
-        "fecha y hora fin debe ser mayor a fecha hora inicio",
-        "error"
-      );
-    }
-
-    if (title.trim().length < 2) {
-      return settitleValid(false);
-    }
-
     if (activeEvent) {
-      dispatch(eventStartUpdate(activeEvent));
-      dispatch(eventClearActiveEvent());
-      dispatch(reset());
+      dispatch(eventStartUpdate(activeEvent, values));
     } else {
       dispatch(
         eventStartAddNew({
-          ...activeEvent,
+          ...values,
         })
       );
     }
@@ -102,7 +88,7 @@ export const CalendarModal = () => {
     settitleValid(true);
 
     dispatch(modalClose());
-    dispatch(reset());
+    dispatch(eventClearActiveEvent());
   };
 
   return (
@@ -121,7 +107,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora inicio</label>
           <DateTimePicker
             onChange={handleStartDateChange}
-            value={activeEvent ? activeEvent.start : start}
+            value={start}
             name="dataStart"
             className="form-control react-dateime-picker react-dateime-picker__wrapper "
           />
@@ -131,7 +117,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora fin</label>
           <DateTimePicker
             onChange={handleEndDateChange}
-            value={activeEvent ? activeEvent.end : end}
+            value={end}
             name="dateEnd"
             className="form-control react-dateime-picker react-dateime-picker__wrapper "
           />
@@ -145,7 +131,7 @@ export const CalendarModal = () => {
             placeholder="Título del evento"
             name="title"
             autoComplete="off"
-            defaultValue={activeEvent ? activeEvent.title : title}
+            defaultValue={title}
             onChange={handleInputChangeTitle}
           />
         </div>
@@ -157,7 +143,7 @@ export const CalendarModal = () => {
             placeholder="Notas"
             rows="5"
             name="notes"
-            defaultValue={activeEvent ? activeEvent.notes : notes}
+            defaultValue={notes}
             onChange={handleInputChangeNotes}
           ></textarea>
         </div>

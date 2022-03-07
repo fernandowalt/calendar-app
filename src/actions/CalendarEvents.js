@@ -22,15 +22,16 @@ export const eventActiveUpdate = (event) => ({
   payload: event,
 });
 
-export const eventStartUpdate = (event) => {
+export const eventStartUpdate = (event,data) => {
+
+
   return async (dispatch) => {
     try {
-      console.log(event);
-      const resp = await fetchConToken(`/events/${event._id}`, event, "PUT");
+      const resp = await fetchConToken(`/events/${event._id}`,data, "PUT");
       const body = await resp.json();
 
-      if (body.ok) {
-        dispatch(eventUpdate(event));
+      if (body.ok) { 
+       
         dispatch(eventStartLoading());
       } else {
         Swal.fire("Error", body.msg, "error");
@@ -40,11 +41,6 @@ export const eventStartUpdate = (event) => {
     }
   };
 };
-
-const eventUpdate = (event) => ({
-  type: types.eventUpdate,
-  payload: event,
-});
 
 const eventDeleted = () => ({
   type: types.eventDeleted,
