@@ -10,15 +10,15 @@ export const LoginScreen = () => {
   const dispatch = useDispatch();
 
   const [formLoginValues, handleLoginInputChange] = useForm({
-    lEmail: "menchoelbarbaro@gmail.com",
-    lPassword: "123456",
+    lEmail: "",
+    lPassword: "",
   });
 
   const [formRegisterValues, handleRegisterInputChange] = useForm({
-    rName: "fenrando",
-    rEmail: "fernando@gmail.com",
-    rPassword: "123456",
-    rPassword2: "123456",
+    rName: "",
+    rEmail: "",
+    rPassword: "",
+    rPassword2: "",
   });
 
   const { rName, rEmail, rPassword, rPassword2 } = formRegisterValues;
@@ -74,7 +74,7 @@ export const LoginScreen = () => {
 
         <div className="col-md-6 login-form-2">
           <h3>Registro</h3>
-          <form onSubmit={handleRegister}>
+          <form onSubmit={handleRegister} autocomplete="off">
             <div className="form-group">
               <input
                 type="text"
@@ -83,6 +83,7 @@ export const LoginScreen = () => {
                 name="rName"
                 value={rName}
                 onChange={handleRegisterInputChange}
+                
               />
             </div>
             <div className="form-group">
@@ -93,6 +94,7 @@ export const LoginScreen = () => {
                 name="rEmail"
                 value={rEmail}
                 onChange={handleRegisterInputChange}
+         
               />
             </div>
             <div className="form-group">

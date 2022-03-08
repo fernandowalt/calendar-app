@@ -1,12 +1,9 @@
 import Modal from "react-modal";
 import DateTimePicker from "react-datetime-picker";
-import moment from "moment";
 import { useState } from "react";
-import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { modalClose } from "../../actions/ui";
-
 import {
   eventClearActiveEvent,
   eventStartAddNew,
@@ -38,7 +35,7 @@ export const CalendarModal = () => {
     title: "",
     notes: "",
   });
-  console.log(values);
+
   useEffect(() => {
     if (activeEvent) {
       setvalues({ ...activeEvent });
@@ -65,17 +62,14 @@ export const CalendarModal = () => {
   };
 
   const handleEndDateChange = (e) => {
-    console.log(values);
     setvalues({ ...values, end: e });
   };
 
   const handleInputChangeTitle = ({ target }) => {
-    console.log(values);
     setvalues({ ...values, title: target.value });
   };
 
   const handleInputChangeNotes = ({ target }) => {
-    console.log(values);
     setvalues({ ...values, notes: target.value });
   };
 

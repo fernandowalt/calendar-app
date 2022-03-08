@@ -49,7 +49,7 @@ const eventDeleted = () => ({
 export const eventStartDelete = (event) => {
   return async (dispatch, getState) => {
     const { _id } = getState().calendar.activeEvent;
-    console.log(_id);
+
 
     try {
       const resp = await fetchConToken(`/events/${_id}`, {}, "DELETE");
@@ -72,13 +72,12 @@ export const eventStartAddNew = (event) => {
     try {
       const resp = await fetchConToken("/events", event, "POST");
       const body = await resp.json();
-      console.log(body);
 
       if (body.ok) {
         event.id = body.evento._id;
         event.user = { uid: uid, name: name };
 
-        console.log(event);
+ 
 
         dispatch(eventAddNew(event));
       }
